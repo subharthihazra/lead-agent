@@ -1,0 +1,30 @@
+{
+  "name": "lead-agent",
+  "version": "1.0.0",
+  "description": "LLM-powered simulated WhatsApp lead qualifier bot",
+  "main": "index.js",
+  "scripts": {
+    "cli": "node cli/index.js",
+    "api": "node api/server.js"
+  },
+  "keywords": [
+    "LLM",
+    "lead-qualification",
+    "cli",
+    "express",
+    "langchain",
+    "gemini",
+    "real-estate"
+  ],
+  "author": "Subharthi Hazra",
+  "license": "MIT",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "inquirer": "^12.6.3",
+    "langchain": "^0.3.28",
+    "mustache": "^4.2.0",
+    "zod": "^3.25.64"
+  }
+}
