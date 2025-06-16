@@ -4,8 +4,9 @@
   "description": "LLM-powered simulated WhatsApp lead qualifier bot",
   "main": "index.js",
   "scripts": {
-    "cli": "node cli/index.js",
-    "api": "node api/server.js"
+    "start:api": "node api/index.js",
+    "start:cli": "node cli/index.js",
+    "dev:api": "nodemon api/index.js"
   },
   "keywords": [
     "LLM",
@@ -20,11 +21,17 @@
   "license": "MIT",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@langchain/google-genai": "^0.2.12",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "inquirer": "^12.6.3",
     "langchain": "^0.3.28",
     "mustache": "^4.2.0",
+    "readline-sync": "^1.4.10",
     "zod": "^3.25.64"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
