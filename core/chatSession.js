@@ -1,6 +1,13 @@
 const { createLLM } = require("./llmClient");
 
 async function runChatTurn(lead, messages, config) {
+  if (!lead || !lead.name || !lead.phone || !lead.source) {
+    throw new Error("Invalid lead data provided");
+  }
+  if (!Array.isArray(messages)) {
+    throw new Error("Messages must be an array");
+  }
+
   const agent = createLLM();
 
   const formattedChat = messages
@@ -48,15 +55,30 @@ Follow this output format only (in JSON):
   "exit": true | false,
   "reason": "Explanation for 'exit' status"
 }
-`;
+`.trim();
 
   const res = await agent.invoke(systemPrompt);
   const raw = res.content.trim();
 
   const match = raw.match(/```json\s*([\s\S]*?)```/i);
-  if (!match) throw new Error("No valid JSON block found in LLM response");
+  if (!match || !match[1]) {
+    throw new Error("No valid JSON block found in LLM response");
+  }
 
-  const parsed = JSON.parse(match[1]);
+  let parsed;
+  try {
+    parsed = JSON.parse(match[1]);
+  } catch (err) {
+    throw new Error("Failed to parse JSON response from LLM");
+  }
+
+  if (
+    typeof parsed.reply !== "string" ||
+    typeof parsed.exit !== "boolean" ||
+    typeof parsed.reason !== "string"
+  ) {
+    throw new Error("Parsed JSON missing required fields or invalid types");
+  }
 
   const updatedMessages = [
     ...messages,

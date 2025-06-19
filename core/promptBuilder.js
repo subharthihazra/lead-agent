@@ -9,14 +9,14 @@ function buildPrompt(type, chatLog, metadata = {}) {
 
   if (type === "classifier") {
     return `
-You are a lead qualification assistant in the "${config.industry}" domain.
-Classify the lead into:
-- Hot (serious, responsive, clear budget + urgency)
+You are a lead qualification assistant working in the "${
+      config.industry
+    }" domain.
+
+Classify the lead into one of the following:
+- Hot (serious, responsive, clear budget and urgency)
 - Cold (vague, unsure, passive)
-- Invalid (nonsense, spam, unclear)
-
-Your job is to return only a **valid JSON object**, without any explanation, commentary, or formatting outside the JSON block.
-
+- Invalid (spam, irrelevant, unclear)
 
 == Business Rules ==
 ${config.rules?.classification || "Use general judgment."}
@@ -29,22 +29,22 @@ ${JSON.stringify(metadata, null, 2)}
 
 OUTPUT INSTRUCTIONS:
 - Respond ONLY with a JSON object.
-- Do NOT add comments, markdown, or any extra text.
-- If any field is missing from the chat, return it with an empty string ("").
+- Do NOT include comments, markdown, or extra text.
+- If any required field is missing, set its value to an empty string ("").
 
-Respond only with JSON:
+Expected format:
 {
   "status": "Hot" | "Cold" | "Invalid",
-  "reason": "..."
+  "reason": "Your reasoning here"
 }
 
-Now, return in the same JSON format. Do not add anything else.
+Respond only with the JSON object. Nothing else.
     `.trim();
-  } else if (type === "extractor") {
-    return `
-You are an intelligent assistant designed to extract structured metadata from lead conversations.
+  }
 
-Your job is to return only a **valid JSON object**, without any explanation, commentary, or formatting outside the JSON block.
+  if (type === "extractor") {
+    return `
+You are an intelligent assistant that extracts structured metadata from real estate lead conversations.
 
 == Transcript ==
 ${transcript}
@@ -52,14 +52,12 @@ ${transcript}
 == Required Metadata ==
 ${JSON.stringify(config.rules?.metadataFormat, null, 2)}
 
-
 OUTPUT INSTRUCTIONS:
 - Respond ONLY with a JSON object.
-- Do NOT add comments, markdown, or any extra text.
-- If any field is missing from the chat, return it with an empty string ("").
+- Do NOT include comments, markdown, or extra text.
+- If a field is missing, return it with an empty string ("").
 
-
-Example Output:
+Example format:
 {
   "location": "Kolkata",
   "propertyType": "Apartment",
@@ -68,8 +66,7 @@ Example Output:
   "timeline": "3 months"
 }
 
-
-Extract and return only what is present in JSON:
+Return only the JSON object with available fields:
 {
   "location": "...",
   "propertyType": "...",
@@ -78,12 +75,10 @@ Extract and return only what is present in JSON:
   "timeline": "...",
   ...
 }
-
-Now, return in the same JSON format. Do not add anything else.
     `.trim();
-  } else {
-    throw new Error(`Unknown prompt type: ${type}`);
   }
+
+  throw new Error(`Unknown prompt type: ${type}`);
 }
 
 module.exports = {
