@@ -1,7 +1,7 @@
 const { loadConfig } = require("../config");
 
 function buildPrompt(type, chatLog, metadata = {}) {
-  const config = loadConfig(process.env.INDUSTRY || "real-estate");
+  const config = loadConfig(process.env.INDUSTRY, process.env.LOCATION);
 
   const transcript = chatLog
     .map((m) => `${m.role === "agent" ? "Agent" : "User"}: ${m.content}`)

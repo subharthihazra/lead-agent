@@ -7,7 +7,7 @@ const { saveOutput } = require("../utils/file");
 const { loadConfig } = require("../config");
 
 async function runSession() {
-  const config = loadConfig(process.env.INDUSTRY || "real-estate");
+  const config = loadConfig(process.env.INDUSTRY, process.env.LOCATION);
 
   console.log("=== Lead Qualification CLI ===");
 
@@ -23,6 +23,11 @@ async function runSession() {
     hideEchoBack: false,
   });
 
+  if (!name.trim() || !phone.trim() || !source.trim()) {
+    console.error("Name, Phone, and Source are required fields.");
+    process.exit(1);
+  }
+
   const leadInfo = {
     name,
     phone,
@@ -30,7 +35,7 @@ async function runSession() {
     message: initialMessage || "",
   };
 
-  console.log("\n📞 Starting AI conversation with lead...\n");
+  console.log("\n\nStarting AI conversation with lead...\n");
 
   const { messages } = await runChat(leadInfo, config);
   const metadata = await extractMetadata(messages, config);
@@ -45,7 +50,7 @@ async function runSession() {
 
   await saveOutput(finalOutput);
 
-  console.log("\nConversation complete. Classification:");
+  console.log("\n\nConversation complete. Classification:");
   console.log(JSON.stringify(classification, null, 2));
 }
 

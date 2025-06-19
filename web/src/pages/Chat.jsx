@@ -61,7 +61,7 @@ export default function Chat() {
         };
         return updated;
       });
-      if (res.data.exited) setChatEnded(true);
+      if (res.data.exit) setChatEnded(true);
     } catch (err) {
       setMessages((prev) => {
         const updated = [...prev];

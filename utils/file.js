@@ -14,18 +14,6 @@ function saveOutput(data, dir = "./outputs") {
   console.log(`📝 Output saved to ${filename}`);
 }
 
-function loadConfig(industry = "real-estate") {
-  const configPath = path.join(__dirname, "..", "config", `${industry}.json`);
-  try {
-    const content = fs.readFileSync(configPath, "utf-8");
-    return JSON.parse(content);
-  } catch (err) {
-    console.error(`Failed to load config for ${industry}:`, err.message);
-    return {};
-  }
-}
-
 module.exports = {
-  loadConfig,
   saveOutput,
 };

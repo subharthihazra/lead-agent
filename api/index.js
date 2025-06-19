@@ -44,9 +44,7 @@ async function generateSessionSummary(sessionId, session) {
 
 app.post("/api/session/start", async (req, res) => {
   const lead = req.body;
-  const config = loadConfig(process.env.INDUSTRY || "real-estate");
-
-  console.log(lead);
+  const config = loadConfig(process.env.INDUSTRY, process.env.LOCATION);
 
   try {
     const result = await runChat(

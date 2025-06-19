@@ -6,7 +6,7 @@ async function extractMetadata(chatLog) {
   const prompt = buildPrompt("extractor", chatLog);
 
   const res = await model.invoke(prompt);
-  console.log("ex: ", res);
+
   try {
     const match = res.content.match(/```json\s*([\s\S]*?)```/i);
     if (!match) throw new Error("No JSON object found in response.");
