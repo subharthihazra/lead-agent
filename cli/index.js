@@ -1,4 +1,3 @@
-// cli/index.js
 require("dotenv").config();
 const readlineSync = require("readline-sync");
 const { runChat } = require("./chatRunner");
@@ -10,7 +9,7 @@ const { loadConfig } = require("../config");
 async function runSession() {
   const config = loadConfig(process.env.INDUSTRY || "real-estate");
 
-  console.log("=== 🧠 Lead Qualification CLI ===");
+  console.log("=== Lead Qualification CLI ===");
 
   const name = readlineSync.question("Lead Name: ", { hideEchoBack: false });
   const phone = readlineSync.question("Phone Number: ", {
@@ -46,7 +45,7 @@ async function runSession() {
 
   await saveOutput(finalOutput);
 
-  console.log("\n✅ Conversation complete. Classification:");
+  console.log("\nConversation complete. Classification:");
   console.log(JSON.stringify(classification, null, 2));
 }
 

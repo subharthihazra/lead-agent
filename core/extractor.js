@@ -1,12 +1,6 @@
-// core/extractor.js
 const { createLLM } = require("./llmClient");
 const { buildPrompt } = require("./promptBuilder");
 
-/**
- * Extracts budget, location, etc. from conversation
- * @param {Array} chatLog
- * @returns {Object}
- */
 async function extractMetadata(chatLog) {
   const model = createLLM({ temperature: 0.1 });
   const prompt = buildPrompt("extractor", chatLog);

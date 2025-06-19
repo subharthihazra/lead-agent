@@ -1,11 +1,6 @@
-// utils/file.js
 const fs = require("fs");
 const path = require("path");
-/**
- * Saves the conversation output to a timestamped JSON file
- * @param {Object} data - Final output including lead, transcript, metadata, classification
- * @param {string} dir - Optional output directory (default: "./outputs")
- */
+
 function saveOutput(data, dir = "./outputs") {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
@@ -19,11 +14,6 @@ function saveOutput(data, dir = "./outputs") {
   console.log(`📝 Output saved to ${filename}`);
 }
 
-/**
- * Loads business config JSON for a given industry.
- * @param {string} industry
- * @returns {object} Parsed config object
- */
 function loadConfig(industry = "real-estate") {
   const configPath = path.join(__dirname, "..", "config", `${industry}.json`);
   try {

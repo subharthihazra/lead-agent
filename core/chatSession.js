@@ -1,33 +1,13 @@
-// core/chatSession.js
 const { createLLM } = require("./llmClient");
 
-/**
- * Runs a chat session between lead and agent using LLM
- * @param {Object} lead - { name, phone, source, message }
- * @param {Object} config - loaded config for industry
- * @param {Function} onUserInput - async function that returns user input string
- * @param {Function} onAgentResponse - function to handle agent response string
- * @returns {Array} messages - full chat history
- */
-async function runChatSession(lead, config, onUserInput, onAgentResponse) {
+async function runChatTurn(lead, messages, config) {
   const agent = createLLM();
 
-  const messages = [
-    {
-      role: "user",
-      content: lead.message || "Hi, I'm looking for assistance.",
-    },
-  ];
+  const formattedChat = messages
+    .map((m) => `${m.role === "agent" ? "Agent" : "User"}: ${m.content}`)
+    .join("\n");
 
-  let counter = 0;
-
-  while (true) {
-    const prompt =
-      messages
-        .map((m) => `${m.role === "agent" ? "Agent" : "User"}: ${m.content}`)
-        .join("\n") + "\nAgent:";
-
-    const systemPrompt = `
+  const systemPrompt = `
 You are Lead AI Agent, a professional and friendly assistant designed to qualify real estate leads through natural conversation.
 
 Your goal is to understand the lead's requirements clearly and politely, including:
@@ -55,9 +35,8 @@ Phone: ${lead.phone}
 Source: ${lead.source}
 Initial Message: ${lead.message || "N/A"}
 
-
 == Chat History ==
-${prompt}
+${formattedChat}
 
 OUTPUT INSTRUCTIONS:
 - Respond ONLY with a JSON object.
@@ -66,34 +45,32 @@ OUTPUT INSTRUCTIONS:
 Follow this output format only (in JSON):
 {
   "reply": "Your reply message to the lead.",
-  "exit": true | false, // true if the conversation is done (e.g., lead says bye, shows disinterest, or all info is collected)
-  "reason": "Brief explanation why you marked 'exit' as true or false"
+  "exit": true | false,
+  "reason": "Explanation for 'exit' status"
 }
+`;
 
-Now, return in the same JSON format. Do not add anything else.
-`.trim();
+  const res = await agent.invoke(systemPrompt);
+  const raw = res.content.trim();
 
-    const res = await agent.invoke(systemPrompt);
-    console.log(res);
-    const text = res.content.trim();
+  const match = raw.match(/```json\s*([\s\S]*?)```/i);
+  if (!match) throw new Error("No valid JSON block found in LLM response");
 
-    const match = text.match(/```json\s*([\s\S]*?)```/i);
-    if (!match) throw new Error("No valid JSON block found");
+  const parsed = JSON.parse(match[1]);
 
-    const reply = JSON.parse(match[1]);
-    messages.push({ role: "agent", content: reply.reply });
-    onAgentResponse?.(reply.reply);
+  const updatedMessages = [
+    ...messages,
+    { role: "agent", content: parsed.reply },
+  ];
 
-    const userInput = await onUserInput();
-    if (reply.exit == true || counter == 50) break;
-
-    messages.push({ role: "user", content: userInput });
-  }
-
-  counter++;
-  return messages;
+  return {
+    reply: parsed.reply,
+    exit: parsed.exit,
+    reason: parsed.reason,
+    updatedMessages,
+  };
 }
 
 module.exports = {
-  runChatSession,
+  runChatTurn,
 };

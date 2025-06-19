@@ -1,11 +1,5 @@
-// core/llmClient.js
 const { ChatGoogleGenerativeAI } = require("@langchain/google-genai");
 
-/**
- * Returns a new Gemini LLM client
- * @param {Object} [options]
- * @returns {ChatGoogleGenerativeAI}
- */
 function createLLM(options = {}) {
   const model = new ChatGoogleGenerativeAI({
     model: "gemini-2.0-flash",

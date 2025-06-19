@@ -6,7 +6,8 @@
   "scripts": {
     "start:api": "node api/index.js",
     "start:cli": "node cli/index.js",
-    "dev:api": "nodemon api/index.js"
+    "dev:api": "nodemon api/index.js",
+    "dev:web": "npm run dev --prefix web"
   },
   "keywords": [
     "LLM",
@@ -22,6 +23,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@langchain/google-genai": "^0.2.12",
+    "axios": "^1.10.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",

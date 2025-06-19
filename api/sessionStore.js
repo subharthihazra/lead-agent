@@ -3,17 +3,12 @@ const { v4: uuidv4 } = require("uuid");
 
 const sessions = {};
 
-function createSession(lead, config) {
+function createSession(lead, config, messages) {
   const sessionId = uuidv4();
   sessions[sessionId] = {
     lead,
     config,
-    messages: [
-      {
-        role: "user",
-        content: lead?.message || "Hi, I'm looking for assistance.",
-      },
-    ],
+    messages,
   };
   return sessionId;
 }
@@ -22,8 +17,12 @@ function getSession(sessionId) {
   return sessions[sessionId];
 }
 
-function addMessage(sessionId, role, content) {
-  sessions[sessionId]?.messages.push({ role, content });
+function getAllSessions() {
+  return sessions;
 }
 
-module.exports = { createSession, getSession, addMessage };
+function updateSession(sessionId, data) {
+  sessions[sessionId] = data;
+}
+
+module.exports = { createSession, getSession, getAllSessions, updateSession };

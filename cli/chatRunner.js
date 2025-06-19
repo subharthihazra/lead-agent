@@ -1,19 +1,37 @@
-// cli/chatRunner.js
 const readlineSync = require("readline-sync");
-const { runChatSession } = require("../core/chatSession");
+const { runChatTurn } = require("../core/chatSession");
 
-/**
- * CLI wrapper around reusable chat session
- */
 async function runChat(lead, config) {
-  return {
-    messages: await runChatSession(
-      lead,
-      config,
-      async () => readlineSync.question("User: "),
-      (reply) => console.log("Agent: ", reply)
-    ),
-  };
+  let messages = [
+    {
+      role: "user",
+      content: lead.message || "Hi, I'm looking for assistance.",
+    },
+  ];
+
+  while (true) {
+    const result = await runChatTurn(lead, messages, config);
+
+    console.log("Agent:", result.reply);
+
+    if (result.exit) {
+      console.log("Conversation ended. Reason:", result.reason);
+      break;
+    }
+
+    const userInput = readlineSync.question("User: ");
+    if (!userInput.trim()) {
+      console.log("No input received. Ending session.");
+      break;
+    }
+
+    messages = [
+      ...result.updatedMessages,
+      { role: "user", content: userInput },
+    ];
+  }
+
+  return { messages };
 }
 
 module.exports = {

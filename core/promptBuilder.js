@@ -1,12 +1,5 @@
-// core/promptBuilder.js
 const { loadConfig } = require("../config");
 
-/**
- * Builds system prompt for classification or extraction
- * @param {string} type - 'classifier' | 'extractor'
- * @param {Array} chatLog - full conversation array
- * @param {Object} metadata - optional extracted metadata
- */
 function buildPrompt(type, chatLog, metadata = {}) {
   const config = loadConfig(process.env.INDUSTRY || "real-estate");
 
