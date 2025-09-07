@@ -6,8 +6,11 @@
   "scripts": {
     "start:api": "node api/index.js",
     "start:cli": "node cli/index.js",
+    "start:web": "npm run start --prefix web",
+    "build:web": "npm run build --prefix web",
     "dev:api": "nodemon api/index.js",
-    "dev:web": "npm run dev --prefix web"
+    "dev:web": "npm run dev --prefix web",
+    "deploy": "npm run build:web && concurrently \"npm run start:api\" \"npm run start:web\""
   },
   "keywords": [
     "LLM",
@@ -34,6 +37,7 @@
     "zod": "^3.25.64"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "nodemon": "^3.1.10"
   }
 }
